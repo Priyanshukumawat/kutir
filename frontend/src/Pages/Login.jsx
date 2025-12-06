@@ -1,48 +1,111 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import Input from "../common/Input";
-import Button from "../common/Button";
+import Input from "../components/common/Input";
+import Button from "../components/common/Button";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
 
 function Login() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [agree, setAgree] = useState(false);
 
-  const sendOtp = () => {
-    if (!email.trim() || !email.includes("@")) {
-      toast.error("Enter a valid email.");
-      return;
-    }
-    if (!agree) {
-      toast.error("You must agree to the Terms & Conditions.");
-      return;
-    }
+  const [timer, setTimer] = useState(0); // ⏳ 60 sec countdown
 
-    setOtpSent(true);
-    toast.success("OTP sent!");
+  // ----------------------------
+  // TIMER COUNTDOWN HANDLER
+  // ----------------------------
+  useEffect(() => {
+    if (timer <= 0) return;
+    const interval = setInterval(() => setTimer((t) => t - 1), 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  // ----------------------------
+  // SEND OTP
+  // ----------------------------
+  const handleSendOtp = async () => {
+    try {
+      if (!email.trim() || !email.includes("@"))
+        return toast.error("Enter a valid email.");
+
+      if (!agree)
+        return toast.error("You must agree to the Terms & Conditions.");
+
+      const { data } = await axiosInstance.post("/auth/send-otp", { email });
+
+      if (data.success) {
+        setOtpSent(true);
+        setTimer(60); // Start 60 sec timer
+        toast.success("OTP sent!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
   };
 
-  const loginUser = () => {
-    if (!agree) {
-      toast.error("You must agree to the Terms & Conditions.");
-      return;
-    }
+  // VERIFY OTP
+  const loginUser = async () => {
+    try {
+      if (!otp.trim()) return toast.error("Enter OTP.");
 
-    if (!otp.trim()) {
-      toast.error("Enter OTP.");
-      return;
-    }
+      const { data } = await axiosInstance.post("/auth/verify-otp", {
+        email,
+        otp,
+      });
 
-    if (otp.length < 4) {
-      toast.error("OTP must be at least 4 digits.");
-      return;
-    }
+      console.log("🔐 LOGIN RESPONSE:", data);
 
-    toast.success("Logged in successfully!");
-    navigate('/');
+      if (data.success) {
+
+        // ⭐ SAVE USER + TOKEN IN LOCAL STORAGE
+        const loggedUser = { email, role: data.role, token: data.token };
+        localStorage.setItem("kutirUser", JSON.stringify(loggedUser));
+        localStorage.setItem("token", data.token);
+
+        console.log("📦 STORED USER:", loggedUser);
+
+        toast.success("Logged in successfully!");
+
+        navigate("/");
+        window.location.reload();   // refresh UI for navbar
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  // CHANGE EMAIL (RESET FLOW)
+  const changeEmail = () => {
+    setOtpSent(false);
+    setOtp("");
+    setTimer(0);
+    toast("Enter your email again");
+  };
+
+  // RESEND OTP
+  const resendOtp = async () => {
+    if (timer > 0) return; // Don't allow resend during cooldown
+
+    try {
+      const { data } = await axiosInstance.post("/auth/send-otp", { email });
+
+      if (data.success) {
+        setTimer(60);
+        toast.success("OTP resent!");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -53,36 +116,71 @@ function Login() {
           Login
         </h2>
 
-        {/* EMAIL INPUT */}
-        <Input
-          label="Email Address"
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        {/* SEND OTP BUTTON — ONLY IF EMAIL ENTERED & OTP NOT SENT */}
-        {!otpSent && email.trim() !== "" && (
-          <Button title="Send OTP" onClick={sendOtp} />
+        {/* EMAIL FIELD (hidden after OTP sent) */}
+        {!otpSent && (
+          <Input
+            label="Email Address"
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         )}
 
-        {/* OTP INPUT + LOGIN BUTTON AFTER OTP SENT */}
+        {/* SHOW EMAIL + CHANGE BUTTON */}
+        {otpSent && (
+          <div className="mb-4">
+            <p className="text-[#3E0703] text-sm mb-1">Email</p>
+            <div className="flex items-center justify-between bg-[#FFF0C4]/60 px-3 py-2 rounded-lg border border-[#660B05]/30">
+              <span className="text-[#3E0703] text-sm">{email}</span>
+              <button
+                onClick={changeEmail}
+                className="text-[#8C1007] text-xs underline"
+              >
+                Change
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* SEND OTP BUTTON (only before OTP sent) */}
+        {!otpSent && email.trim() !== "" && (
+          <Button title="Send OTP" onClick={handleSendOtp} />
+        )}
+
+        {/* OTP INPUT + LOGIN BUTTON */}
         {otpSent && (
           <>
             <Input
               label="Enter OTP"
               type="text"
-              placeholder="6-digit OTP"
+              placeholder="4-digit OTP"
               value={otp}
+              maxLength={4}
               onChange={(e) => setOtp(e.target.value)}
             />
 
             <Button title="Login" onClick={loginUser} />
+
+            {/* RESEND OTP BUTTON */}
+            <div className="text-center mt-3">
+              {timer > 0 ? (
+                <p className="text-sm text-[#3E0703]">
+                  Resend OTP in <b>{timer}s</b>
+                </p>
+              ) : (
+                <button
+                  onClick={resendOtp}
+                  className="text-[#8C1007] text-sm font-semibold underline"
+                >
+                  Resend OTP
+                </button>
+              )}
+            </div>
           </>
         )}
 
-        {/* TERMS CHECKBOX — ALWAYS VISIBLE */}
+        {/* TERMS CHECKBOX */}
         <div className="flex items-start gap-2 mb-2 mt-4">
           <input
             type="checkbox"
@@ -99,7 +197,6 @@ function Login() {
             and consent to receive OTP via email.
           </label>
         </div>
-
       </div>
     </div>
   );
