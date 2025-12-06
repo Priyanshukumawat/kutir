@@ -7,8 +7,12 @@ function Layout() {
   return (
     <>
       <Navbar />
-      <Outlet />
-      <Footer />
+
+      {/* PUSH ALL CONTENT BELOW FIXED NAVBAR */}
+      <div className="pt-24"> 
+        <Outlet />
+        <Footer />
+      </div>
     </>
   );
 }

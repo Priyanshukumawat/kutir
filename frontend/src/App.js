@@ -6,17 +6,21 @@ import Layout from "./Pages/Layout";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import VendorSignup from "./Pages/VendorSignup";
+import ScrollToTop from "./components/common/ScrollToTop";
+import KutirAssist from "./Pages/KutirAssist";
 
 function App() {
   return (
     <>
       <Toaster />
+      <ScrollToTop />
 
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="vendor/register" element={<VendorSignup />} />
+          <Route path="kutir-assist" element={<KutirAssist />} />
         </Route>
       </Routes>
     </>
