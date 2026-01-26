@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerVendor } = require("../controllers/vendorController.js");
+const { registerVendor, getVendorStatusByEmail } = require("../controllers/vendorController.js");
 const multer = require("multer");
 
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 // FILE STORAGE
 const upload = multer({ dest: "uploads/" });
 
+router.get("/status", getVendorStatusByEmail);
 router.post(
   "/register",
   upload.fields([

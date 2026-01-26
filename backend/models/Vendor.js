@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const VendorSchema = new mongoose.Schema(
   {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     fullName: { type: String, required: true },
     mobile: { type: String, required: true },
     email: { type: String, required: true },

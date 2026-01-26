@@ -1,12 +1,44 @@
-import React, { useState } from "react";
-
-import PersonalDetails from "../components/Vendor Registration/PersonalDetails";
-import BusinessDetails from "../components/Vendor Registration/BusinessDetails";
-import BankDetails from "../components/Vendor Registration/BankDetails";
+import React, { useState, useEffect } from "react";
+import PersonalDetails from "../components/VendorRegistration/PersonalDetails";
+import BusinessDetails from "../components/VendorRegistration/BusinessDetails";
+import BankDetails from "../components/VendorRegistration/BankDetails";
 import toast from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
+import Button from '../components/common/Button'
+import axiosInstance from "../utils/axiosInstance";
 
 function VendorSignup() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [checking, setChecking] = useState(true);
+  const [vendorStatus, setVendorStatus] = useState(null);
+  const user = JSON.parse(localStorage.getItem("kutirUser"));
+
+
+  useEffect(() => {
+    const checkVendorStatus = async () => {
+      if (!user?.email) {
+        setChecking(false);
+        return;
+      }
+
+      try {
+        const { data } = await axiosInstance.get(
+          `/vendor/status?email=${user.email}`
+        );
+
+        if (data.exists) {
+          setVendorStatus(data);
+        }
+      } catch (err) {
+        console.error("Vendor status check failed", err);
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    checkVendorStatus();
+  }, []);
 
 
   const handleSubmit = async () => {
@@ -446,16 +478,32 @@ function VendorSignup() {
     return (
       <div className="min-h-screen flex justify-center items-center px-4 bg-[#FFF0C4]/40">
         <div className="bg-white max-w-lg w-full p-8 rounded-2xl shadow-lg text-center border border-[#660B05]/30">
+
           <h2 className="text-2xl font-semibold text-[#3E0703] mb-3">
             🎉 Thank You for Registering!
           </h2>
-          <p className="text-[#3E0703]/80 leading-relaxed">
+
+          <p className="text-[#3E0703]/80 leading-relaxed mb-6">
             Your vendor application has been submitted successfully.
             <br />
             Our team will review your details and verify your documents.
             <br />
             You will be notified once your vendor profile is approved.
           </p>
+
+          {/* ACTION BUTTONS */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+            <Button
+              title="Explore Kutir"
+              onClick={() => navigate("/")}
+              className="sm:w-1/2"
+            />
+            <Button
+              title="Know More About Vendorship"
+              onClick={() => navigate("/kutir-assist")}
+              className="sm:w-1/2"
+            />
+          </div>
         </div>
       </div>
     );
@@ -482,8 +530,73 @@ function VendorSignup() {
   //=====================================================
   // UI RENDER
   //=====================================================
+  if (checking) {
   return (
+    <div className="min-h-screen flex justify-center items-center bg-[#FFF0C4]/40">
+      <div className="bg-white px-6 py-4 rounded-xl shadow text-[#3E0703]">
+        Checking vendor status...
+      </div>
+    </div>
+  );
+}
+
+if (vendorStatus?.exists) {
+  return (
+    <div className="min-h-screen flex justify-center items-center px-4 bg-[#FFF0C4]/40">
+      <div className="bg-white max-w-lg w-full p-8 rounded-2xl shadow-lg text-center border border-[#660B05]/30">
+
+        {vendorStatus.status === "pending" && (
+          <>
+            <h2 className="text-xl font-semibold text-[#3E0703] mb-3">
+              🕒 Application Under Review
+            </h2>
+            <p className="text-[#3E0703]/80">
+              Your vendor application is currently under review.
+              We will notify you once verification is complete.
+            </p>
+          </>
+        )}
+
+        {vendorStatus.status === "approved" && (
+          <>
+            <h2 className="text-xl font-semibold text-green-700 mb-3">
+              ✅ You are Approved!
+            </h2>
+            <p className="mb-4">Your vendor account is active.</p>
+            <Button
+              title="Go to Vendor Dashboard"
+              onClick={() => navigate("/vendor-panel")}
+            />
+          </>
+        )}
+
+        {vendorStatus.status === "rejected" && (
+          <>
+            <h2 className="text-xl font-semibold text-red-600 mb-3">
+              ❌ Application Rejected
+            </h2>
+            <p className="text-sm mb-2">
+              Reason: {vendorStatus.rejectReason || "Not specified"}
+            </p>
+            <Button
+              title="Reapply"
+              onClick={() => {
+                setVendorStatus(null);
+                setStep(1);
+              }}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+  return (
+    
     <div className="min-h-screen bg-cream/20 flex justify-center px-4 py-10">
+
+      
       <div className="bg-white max-w-2xl w-full p-6 sm:p-8 rounded-2xl shadow-lg border border-accent/20">
         <Stepper />
 

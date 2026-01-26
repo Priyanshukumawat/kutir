@@ -15,7 +15,11 @@ exports.sendOtp = async (req, res) => {
 
     // Find or create user
     let user = await User.findOne({ email });
-    if (!user) user = await User.create({ email });
+
+    // If not exists, create user with default role=user
+    if (!user) {
+      user = await User.create({ email, role: "user" });
+    }
 
     // Generate OTP
     const otp = generateOtp();
@@ -107,6 +111,7 @@ exports.verifyOtp = async (req, res) => {
       message: "Login successful",
       token,
       role: user.role,
+      email: user.email
     });
 
   } catch (err) {

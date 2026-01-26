@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const path = require("path");
 
 dotenv.config();
 const app = express();
@@ -10,6 +11,9 @@ const app = express();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
+
+// 🔥 Serve uploaded files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
