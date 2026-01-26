@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LogoutPopup from "../common/LogoutPopup";
 
-function AdminSidebar({ setView }) {
+function AdminSidebar({ open, onClose, setView }) {
   const [openLogout, setOpenLogout] = useState(false);
   const navigate = useNavigate();
 
@@ -12,29 +12,54 @@ function AdminSidebar({ setView }) {
     navigate("/login");
   };
 
+  const menuItems = [
+    ["Dashboard", "dashboard"],
+    ["Vendors", "vendors"],
+    ["Products", "products"],
+    ["Orders", "orders"],
+    ["Users", "users"],
+  ];
+
   return (
     <>
-      <div className="w-56 bg-white border-r hidden md:flex flex-col justify-between">
-        {/* Top Menu */}
-        <div className="p-4 space-y-2">
-          {[
-            ["Dashboard", "dashboard"],
-            ["Vendors", "vendors"],
-            ["Products", "products"],
-            ["Orders", "orders"],
-            ["Users", "users"],
-          ].map(([label, key]) => (
+      {/* Mobile Backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`
+          fixed md:static top-0 left-0 h-full w-64 bg-white border-r shadow-lg md:shadow-none z-50
+          transform transition-transform duration-300
+          ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
+          flex flex-col
+        `}
+      >
+        {/* Menu (fills available height) */}
+        <div className="p-4 space-y-2 flex-1 overflow-y-auto">
+          <h2 className="text-lg font-bold text-accent mb-4 md:hidden">
+            Menu
+          </h2>
+
+          {menuItems.map(([label, key]) => (
             <button
               key={key}
-              onClick={() => setView(key)}
-              className="w-full text-left px-3 py-2 rounded hover:bg-cream text-primary font-medium"
+              onClick={() => {
+                setView(key);
+                onClose && onClose(); // closes mobile drawer
+              }}
+              className="w-full text-left px-3 py-2 rounded hover:bg-accent hover:text-cream text-primary font-medium"
             >
               {label}
             </button>
           ))}
         </div>
 
-        {/* Logout Section */}
+        {/* Logout always at bottom */}
         <div className="p-4 border-t">
           <button
             onClick={() => setOpenLogout(true)}
@@ -45,7 +70,7 @@ function AdminSidebar({ setView }) {
         </div>
       </div>
 
-      {/* Logout Confirmation Popup */}
+      {/* Logout Confirmation */}
       <LogoutPopup
         open={openLogout}
         onClose={() => setOpenLogout(false)}

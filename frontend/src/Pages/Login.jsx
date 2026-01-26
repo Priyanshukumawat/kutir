@@ -72,7 +72,11 @@ function Login() {
 
         toast.success("Logged in successfully!");
 
-        navigate("/");
+        // 🚀 ROLE BASED REDIRECT
+        if (data.role === "admin") navigate("/admin-panel");
+        else if (data.role === "vendor") navigate("/vendor-panel");
+        else navigate("/");
+        
         window.location.reload();   // refresh UI for navbar
       } else {
         toast.error(data.message);

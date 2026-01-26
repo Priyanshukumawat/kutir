@@ -8,7 +8,9 @@ import {
   FiSearch,
   FiChevronDown,
 } from "react-icons/fi";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
 import LogoutPopup from "../common/LogoutPopup";
 
 function Navbar() {
@@ -86,6 +88,40 @@ function Navbar() {
     "Kashmir",
     "North East",
   ];
+
+
+  const handleBecomeVendor = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const { data } = await axiosInstance.get(
+        `/vendor/status?email=${user.email}`
+      );
+
+      if (!data.exists) {
+        navigate("/vendor/register");
+      }
+      else if (data.status === "pending") {
+        toast("🕒 Your vendor application is under review!");
+      }
+      else if (data.status === "approved") {
+        navigate("/vendor-panel");
+      }
+      else if (data.status === "rejected") {
+        toast.error("❌ Your vendor request was rejected. You may reapply.");
+        navigate("/vendor/register");
+      }
+    } catch (err) {
+      console.error("Vendor status check error:", err);
+      toast.error("Unable to check vendor status");
+    }
+  };
+
+
+
 
   return (
     <>
@@ -170,7 +206,7 @@ function Navbar() {
                         Login / Signup
                       </p>
                       <p
-                        onClick={() => handleNavigate("/vendor/register")}
+                        onClick={handleBecomeVendor}
                         className="px-4 py-2 font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer"
                       >
                         Become a Vendor ⭐
@@ -191,18 +227,23 @@ function Navbar() {
                           <p onClick={() => handleNavigate("/user/profile")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Your Profile</p>
                           <p onClick={() => handleNavigate("/user/orders")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Your Orders</p>
                           <p onClick={() => handleNavigate("/user/wishlist")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Wishlist</p>
-                          <p onClick={() => handleNavigate("/vendor/register")} className="px-4 py-2 font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer">
+                          <p onClick={handleBecomeVendor} className="px-4 py-2 font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer">
                             Become a Vendor ⭐
                           </p>
                         </>
                       )}
 
                       {user.role === "admin" && (
-                        <p onClick={() => handleNavigate("/admin/dashboard")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Admin Dashboard</p>
+                        <p onClick={() => handleNavigate("/admin-panel")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Admin Dashboard</p>
                       )}
 
                       {user.role === "vendor" && (
-                        <p onClick={() => handleNavigate("/vendor/dashboard")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Vendor Dashboard</p>
+                        <>
+
+                          <p onClick={() => handleNavigate("/vendor-panel")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Vendor Dashboard</p>
+
+                          <p onClick={() => handleNavigate("/vendor-profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">My Profile</p>
+                        </>
                       )}
 
                       <hr />
@@ -345,7 +386,7 @@ function Navbar() {
                   Login / Signup
                 </p>
                 <p
-                  onClick={() => handleNavigate("/vendor/register")}
+                  onClick={handleBecomeVendor}
                   className="cursor-pointer font-semibold text-[#8C1007]"
                 >
                   Become a Vendor ⭐
@@ -369,7 +410,7 @@ function Navbar() {
                       Wishlist
                     </p>
                     <p
-                      onClick={() => handleNavigate("/vendor/register")}
+                      onClick={handleBecomeVendor}
                       className="cursor-pointer font-semibold text-[#8C1007]"
                     >
                       Become a Vendor ⭐

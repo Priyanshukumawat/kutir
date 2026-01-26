@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminNavbar from "../components/AdminPanel/AdminNavbar";
 import AdminSidebar from "../components/AdminPanel/AdminSidebar";
+
 import AdminDashboard from "../components/AdminPanel/AdminDashboard";
 import ManageVendors from "../components/AdminPanel/ManageVendors";
 import ManageProducts from "../components/AdminPanel/ManageProducts";
@@ -9,6 +10,7 @@ import ManageUsers from "../components/AdminPanel/ManageUsers";
 
 function AdminPanel() {
   const [view, setView] = useState("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderView = () => {
     switch (view) {
@@ -26,10 +28,16 @@ function AdminPanel() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream">
-      <AdminNavbar />
+    <div className="min-h-screen flex flex-col bg-white">
+      <AdminNavbar onMenuClick={() => setSidebarOpen(true)} />
+
       <div className="flex flex-1">
-        <AdminSidebar setView={setView} />
+        <AdminSidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          setView={setView}
+        />
+
         <div className="flex-1 p-4 md:p-6 overflow-auto">
           {renderView()}
         </div>

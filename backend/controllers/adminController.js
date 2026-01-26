@@ -1,4 +1,5 @@
 const Vendor = require("../models/Vendor.js");
+const User = require("../models/User.js");
 const sendEmail = require("../utils/sendEmail.js");
 
 // Approve Vendor
@@ -6,7 +7,6 @@ const approveVendor = async (req, res) => {
   try {
     const { vendorId } = req.params;
 
-    // Find and update vendor status
     const vendor = await Vendor.findByIdAndUpdate(
       vendorId,
       { status: "approved", rejectReason: "" },
@@ -14,35 +14,59 @@ const approveVendor = async (req, res) => {
     );
 
     if (!vendor) {
-      return res.status(404).json({
-        success: false,
-        message: "Vendor not found"
-      });
+      return res.status(404).json({ success: false, message: "Vendor not found" });
     }
 
-    // Send approval email
-    try {
-      await sendEmail(
-        vendor.email,
-        "Vendor Approved - Kutir",
-        `Hello ${vendor.fullName},\n\nYour vendor application has been approved. Welcome aboard!\n\nBest regards,\nKutir Team`
-      );
-    } catch (emailError) {
-      console.error("Email send error:", emailError.message);
-    }
+    // 🚀 UPDATE USER ROLE
+    await User.findByIdAndUpdate(vendor.user, { role: "vendor" });
 
-    return res.json({
-      success: true,
-      message: "Vendor approved successfully",
-      vendor,
-    });
+    await sendEmail(
+      vendor.email,
+      "🎉 Vendor Approved - Welcome to Kutir!",
+      `
+  <div style="background:#f7f4eb;padding:40px 0;font-family:Arial,sans-serif;">
+    <div style="max-width:520px;margin:auto;background:#ffffff;border-radius:12px;padding:30px;border:1px solid #e4dcc7;">
+      
+      <h2 style="text-align:center;color:#660B05;margin-bottom:20px;">
+        🎉 Congratulations, ${vendor.fullName}!
+      </h2>
+
+      <p style="color:#3E0703;font-size:15px;line-height:24px;">
+        We’re excited to inform you that your vendor profile on <strong>Kutir</strong> has been <strong>successfully approved</strong>! 🎊
+      </p>
+
+      <p style="color:#3E0703;font-size:15px;line-height:24px;">
+        You can now access your Vendor Panel and start listing your products, managing orders, and growing your business with us.
+      </p>
+
+      <div style="margin:30px 0;text-align:center;">
+        <a href="http://localhost:5173/vendor-panel"
+           style="display:inline-block;background:#660B05;color:#FFF0C4;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;">
+          Go to Vendor Panel
+        </a>
+      </div>
+
+      <p style="color:#3E0703;font-size:14px;">
+        Start by adding your first product and showcase your craftsmanship to customers across India.
+      </p>
+
+      <hr style="border:0;border-top:1px solid #eee;margin:30px 0;">
+
+      <p style="color:#8C1007;font-size:13px;text-align:center;">
+        Best wishes, <br/>
+        <strong>Kutir Team</strong><br/>
+        🌿 Vocal for Local • Local to Global
+      </p>
+    </div>
+  </div>
+  `
+    );
+
+
+    res.json({ success: true, vendor });
+
   } catch (err) {
-    console.error("Approval error:", err);
-    return res.status(500).json({
-      success: false,
-      message: "Server error during vendor approval",
-      error: err.message,
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -67,6 +91,7 @@ const rejectVendor = async (req, res) => {
       { new: true }
     );
 
+
     if (!vendor) {
       return res.status(404).json({
         success: false,
@@ -74,13 +99,60 @@ const rejectVendor = async (req, res) => {
       });
     }
 
+
+    await User.findByIdAndUpdate(vendor.user, { role: "user" });
+
+
     // Send rejection email
     try {
       await sendEmail(
         vendor.email,
-        "Vendor Rejected - Kutir",
-        `Hello ${vendor.fullName},\n\nWe’re sorry to inform you that your vendor application was rejected.\n\nReason: ${reason}\n\nThank you for your interest.\nKutir Team`
+        "Vendor Application Update - Kutir",
+        `
+  <div style="background:#f7f4eb;padding:40px 0;font-family:Arial,sans-serif;">
+    <div style="max-width:520px;margin:auto;background:#ffffff;border-radius:12px;padding:30px;border:1px solid #e4dcc7;">
+      
+      <h2 style="text-align:center;color:#660B05;margin-bottom:20px;">
+        Vendor Application Update
+      </h2>
+
+      <p style="color:#3E0703;font-size:15px;line-height:24px;">
+        Hi <strong>${vendor.fullName}</strong>,
+      </p>
+
+      <p style="color:#3E0703;font-size:15px;line-height:24px;">
+        Thank you for your interest in becoming a vendor on <strong>Kutir</strong>.
+      </p>
+
+      <p style="color:#3E0703;font-size:15px;line-height:24px;">
+        After carefully reviewing your application, we regret to inform you that it could not be approved at this time.
+      </p>
+
+      <div style="margin:20px 0;padding:12px;background:#FFF0C4;border-left:4px solid #660B05;">
+        <p style="margin:0;color:#660B05;font-weight:600;">Reason:</p>
+        <p style="margin:5px 0 0;color:#3E0703;">${reason}</p>
+      </div>
+
+      <p style="color:#3E0703;font-size:14px;line-height:22px;">
+        You are welcome to update your details and reapply after addressing the above concern.
+      </p>
+
+      <p style="color:#3E0703;font-size:14px;">
+        We truly appreciate your effort and interest in supporting local artisans and handmade products.
+      </p>
+
+      <hr style="border:0;border-top:1px solid #eee;margin:30px 0;">
+
+      <p style="color:#8C1007;font-size:13px;text-align:center;">
+        With regards, <br/>
+        <strong>Kutir Team</strong><br/>
+        🌿 Vocal for Local • Local to Global
+      </p>
+    </div>
+  </div>
+  `
       );
+
     } catch (emailError) {
       console.error("Email send error:", emailError.message);
     }
