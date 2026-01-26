@@ -14,7 +14,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/vendor", require("./routes/vendorRoutes"));
-app.use("/api", require("./routes/adminRoutes"));
+app.use("/api/admin", require("./routes/adminRoutes"));
 
 app.get("/", (req, res) => res.send("Kutir Backend Running..."));
 
