@@ -161,7 +161,7 @@ function Navbar() {
 
             {/* WISHLIST */}
             <div
-              onClick={() => handleNavigate("/user/wishlist")}
+              onClick={() => handleNavigate("/wishlist")}
               className="relative cursor-pointer hover:text-[#FFF0C4]"
             >
               <FiHeart />
@@ -242,7 +242,7 @@ function Navbar() {
 
                           <p onClick={() => handleNavigate("/vendor-panel")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Vendor Dashboard</p>
 
-                          <p onClick={() => handleNavigate("/vendor-profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">My Profile</p>
+                          <p onClick={() => handleNavigate("/vendor-panel/profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">My Profile</p>
                         </>
                       )}
 
@@ -282,7 +282,7 @@ function Navbar() {
         <div className="hidden md:block border-t border-[#FFF0C4]/20">
           <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-10 text-sm">
 
-            {["Home", "Kutir Assist", "Shop", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
+            {["Kutir Assist", "Assistant", "Product", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
               (item) => (
                 <p
                   key={item}
@@ -476,7 +476,7 @@ function Navbar() {
             {/* ---- WISHLIST ---- */}
             <p
               className="cursor-pointer flex justify-between items-center"
-              onClick={() => handleNavigate("/user/wishlist")}
+              onClick={() => handleNavigate("/wishlist")}
             >
               Wishlist
               {wishlistCount > 0 && (
