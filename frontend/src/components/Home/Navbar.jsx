@@ -282,7 +282,7 @@ function Navbar() {
         <div className="hidden md:block border-t border-[#FFF0C4]/20">
           <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-10 text-sm">
 
-            {["Kutir Assist", "Assistant", "Product", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
+            {["Kutir Assist", "Assistance", "Product", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
               (item) => (
                 <p
                   key={item}
