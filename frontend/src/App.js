@@ -25,6 +25,7 @@ import SpecificProduct from "./components/Product/SpecificProduct";
 import ProductPage from "./Pages/ProductPage";
 import Cart from "./Pages/Cart";
 import Wishlist from "./Pages/Wishlist";
+import ArtisanProfile from "./Pages/ArtisanProfie";
 
 function App() {
   return (
@@ -38,12 +39,13 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="vendor/register" element={<VendorSignup />} />
           <Route path="kutir-assist" element={<KutirAssist />} />
-          <Route path="assistant" element={<Assistance />} />
+          <Route path="assistance" element={<Assistance />} />
           {/* <Route path="shop" element={<Product />} /> */}
           <Route path="new-arrivals" element={<ProductPage />} />
           <Route path="collections" element={<ProductPage />} />
           <Route path="best-sellers" element={<ProductPage />} />
-          <Route path="artisans" element={<Artisans />} />
+          <Route path="/artisans" element={<Artisans />} />
+          <Route path="/artisan/:id" element={<ArtisanProfile />} />
 
           <Route path="/product" element={<ProductPage />} />
           <Route path="/cart" element={<Cart />} />
