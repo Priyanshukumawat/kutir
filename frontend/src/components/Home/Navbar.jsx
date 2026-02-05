@@ -224,25 +224,32 @@ function Navbar() {
 
                       {user.role === "user" && (
                         <>
-                          <p onClick={() => handleNavigate("/user/profile")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Your Profile</p>
-                          <p onClick={() => handleNavigate("/user/orders")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Your Orders</p>
-                          <p onClick={() => handleNavigate("/user/wishlist")} className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer">Wishlist</p>
-                          <p onClick={handleBecomeVendor} className="px-4 py-2 font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer">
+                          <p onClick={() => handleNavigate("/user-panel/profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Your Profile</p>
+                          <p onClick={() => handleNavigate("/user-panel/orders")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Your Orders</p>
+                          <p onClick={() => handleNavigate("/wishlist")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Wishlist</p>
+                          <p onClick={handleBecomeVendor} className="px-4 py-2 text-sm font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer">
                             Become a Vendor ⭐
                           </p>
                         </>
                       )}
 
                       {user.role === "admin" && (
-                        <p onClick={() => handleNavigate("/admin-panel")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Admin Dashboard</p>
+                        <>
+                          <p onClick={() => handleNavigate("/admin-panel")} className="px-4 py-2 text-sm font-semibold hover:bg-[#FFF0C4] cursor-pointer">Admin Dashboard</p>
+                          <p onClick={() => handleNavigate("/user-panel/profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">My Profile</p>
+                          <p onClick={() => handleNavigate("/user-panel/orders")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Your Orders</p>
+                          <p onClick={() => handleNavigate("/wishlist")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Wishlist</p>
+                        </>
                       )}
 
                       {user.role === "vendor" && (
                         <>
 
-                          <p onClick={() => handleNavigate("/vendor-panel")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Vendor Dashboard</p>
+                          <p onClick={() => handleNavigate("/vendor-panel")} className="px-4 py-2 text-sm font-semibold hover:bg-[#FFF0C4] cursor-pointer">Vendor Dashboard</p>
 
-                          <p onClick={() => handleNavigate("/vendor-panel/profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">My Profile</p>
+                          <p onClick={() => handleNavigate("/user-panel/profile")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">My Profile</p>
+                          <p onClick={() => handleNavigate("/user-panel/orders")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Your Orders</p>
+                          <p onClick={() => handleNavigate("/wishlist")} className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer">Wishlist</p>
                         </>
                       )}
 
@@ -282,20 +289,28 @@ function Navbar() {
         <div className="hidden md:block border-t border-[#FFF0C4]/20">
           <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-10 text-sm">
 
-            {["Kutir Assist", "Assistance", "Product", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
-              (item) => (
-                <p
-                  key={item}
-                  onClick={() => handleNavigate(`/${item.toLowerCase().replace(/ /g, "-")}`)}
-                  className="cursor-pointer relative group"
-                >
-                  {item}
+            {["Home", "Kutir Assist", "Assistance", "Product", "Catalogue", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
+              (item) => {
+                const path =
+                  item === "Home"
+                    ? "/"
+                    : `/${item.toLowerCase().replace(/ /g, "-")}`;
 
-                  {/* Underline animation */}
-                  <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-[#FFF0C4] transition-all duration-300 group-hover:w-full"></span>
-                </p>
-              )
+                return (
+                  <p
+                    key={item}
+                    onClick={() => handleNavigate(path)}
+                    className="cursor-pointer relative group"
+                  >
+                    {item}
+
+                    {/* Underline animation */}
+                    <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-[#FFF0C4] transition-all duration-300 group-hover:w-full"></span>
+                  </p>
+                );
+              }
             )}
+
 
             {/* ---- CATEGORIES ---- */}
             <div
@@ -400,14 +415,11 @@ function Navbar() {
 
                 {user.role === "user" && (
                   <>
-                    <p onClick={() => handleNavigate("/user/profile")} className="cursor-pointer">
+                    <p onClick={() => handleNavigate("/user-panel/profile")} className="cursor-pointer">
                       Your Profile
                     </p>
-                    <p onClick={() => handleNavigate("/user/orders")} className="cursor-pointer">
+                    <p onClick={() => handleNavigate("/user-panel/orders")} className="cursor-pointer">
                       Your Orders
-                    </p>
-                    <p onClick={() => handleNavigate("/user/wishlist")} className="cursor-pointer">
-                      Wishlist
                     </p>
                     <p
                       onClick={handleBecomeVendor}
@@ -419,18 +431,29 @@ function Navbar() {
                 )}
 
                 {user.role === "admin" && (
-                  <p onClick={() => handleNavigate("/admin/dashboard")} className="cursor-pointer">
-                    Admin Dashboard
-                  </p>
+                  <>
+                    <p onClick={() => handleNavigate("/admin-panel")} className="cursor-pointer">
+                      Admin Dashboard
+                    </p>
+                    <p onClick={() => handleNavigate("/user-panel/profile")} className="cursor-pointer">
+                      Your Profile
+                    </p>
+                    <p onClick={() => handleNavigate("/user-panel/orders")} className="cursor-pointer">
+                      Your Orders
+                    </p>
+                  </>
                 )}
 
                 {user.role === "vendor" && (
                   <>
-                    <p onClick={() => handleNavigate("/vendor/dashboard")} className="cursor-pointer">
+                    <p onClick={() => handleNavigate("/vendor-panel")} className="cursor-pointer">
                       Vendor Dashboard
                     </p>
-                    <p onClick={() => handleNavigate("/user/profile")} className="cursor-pointer">
-                      Profile
+                    <p onClick={() => handleNavigate("/user-panel/profile")} className="cursor-pointer">
+                      Your Profile
+                    </p>
+                    <p onClick={() => handleNavigate("/user-panel/orders")} className="cursor-pointer">
+                      Your Orders
                     </p>
                   </>
                 )}

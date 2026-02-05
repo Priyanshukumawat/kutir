@@ -21,11 +21,18 @@ import VendorReviewsAndRatings from "./components/VendorPanel/VendorReviewsAndRa
 import VendorAddProduct from "./components/VendorPanel/VendorAddProduct";
 import Assistance from "./Pages/Assistance";
 import Artisans from "./Pages/Artisans";
-import SpecificProduct from "./components/Product/SpecificProduct";
 import ProductPage from "./Pages/ProductPage";
 import Cart from "./Pages/Cart";
 import Wishlist from "./Pages/Wishlist";
 import ArtisanProfile from "./Pages/ArtisanProfie";
+import UserPanel from "./Pages/UserPanel";
+import Profile from "./components/UserPanel/Profile";
+import Orders from "./components/UserPanel/Orders";
+import Addresses from "./components/UserPanel/Addresses";
+import CataloguePage from "./Pages/CataloguePage";
+import SpecificCatalogue from "./components/Catalogue/SpecificCatalogue";
+import SpecificProductPage from "./Pages/SpecificProductPage";
+import CheckoutPage from "./Pages/CheckoutPage";
 
 function App() {
   return (
@@ -40,6 +47,12 @@ function App() {
           <Route path="vendor/register" element={<VendorSignup />} />
           <Route path="kutir-assist" element={<KutirAssist />} />
           <Route path="assistance" element={<Assistance />} />
+          <Route path="/catalogue" element={<CataloguePage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route
+            path="/catalogue/:id"
+            element={<SpecificCatalogue />}
+          />
           {/* <Route path="shop" element={<Product />} /> */}
           <Route path="new-arrivals" element={<ProductPage />} />
           <Route path="collections" element={<ProductPage />} />
@@ -47,30 +60,48 @@ function App() {
           <Route path="/artisans" element={<Artisans />} />
           <Route path="/artisan/:id" element={<ArtisanProfile />} />
 
-          <Route path="/product" element={<ProductPage />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/product/:id" element={<SpecificProduct />} />
           <Route
-            path="vendor-panel"
+            path="/user-panel"
             element={
-              <ProtectedRoute role="vendor">
-                <VendorLayout />
+              <ProtectedRoute allowedRoles={["user", "vendor", "admin"]}>
+                <UserPanel />
               </ProtectedRoute>
             }
           >
-            <Route index element={<VendorDashboard />} />
-            <Route path="dashboard" element={<VendorDashboard />} />
-            <Route path="products" element={<VendorProducts />} />
-            <Route path="products/add" element={<VendorAddProduct />} />
-            <Route path="orders" element={<VendorOrders />} />
-            <Route path="wallet" element={<VendorWallet />} />
-            <Route path="reviews" element={<VendorReviewsAndRatings />} />
-            <Route path="marketing" element={<VendorMarketingTools />} />
-            <Route path="support" element={<VendorSupportAndPolicies />} />
-            <Route path="profile" element={<VendorProfile />} />
+            <Route index element={<Profile />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="addresses" element={<Addresses />} />
+            <Route path="orders" element={<Orders />} />
           </Route>
 
+
+
+          <Route path="/product" element={<ProductPage />} />
+          <Route path="/product/:id" element={<SpecificProductPage />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+
+
+        </Route>
+
+        <Route
+          path="vendor-panel"
+          element={
+            <ProtectedRoute role="vendor">
+              <VendorLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<VendorDashboard />} />
+          <Route path="dashboard" element={<VendorDashboard />} />
+          <Route path="products" element={<VendorProducts />} />
+          <Route path="products/add" element={<VendorAddProduct />} />
+          <Route path="orders" element={<VendorOrders />} />
+          <Route path="wallet" element={<VendorWallet />} />
+          <Route path="reviews" element={<VendorReviewsAndRatings />} />
+          <Route path="marketing" element={<VendorMarketingTools />} />
+          <Route path="support" element={<VendorSupportAndPolicies />} />
+          <Route path="profile" element={<VendorProfile />} />
         </Route>
 
         <Route
