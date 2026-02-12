@@ -20,11 +20,9 @@ import VendorMarketingTools from "./components/VendorPanel/VendorMarketingTools"
 import VendorReviewsAndRatings from "./components/VendorPanel/VendorReviewsAndRatings";
 import VendorAddProduct from "./components/VendorPanel/VendorAddProduct";
 import Assistance from "./Pages/Assistance";
-import Artisans from "./Pages/Artisans";
 import ProductPage from "./Pages/ProductPage";
 import Cart from "./Pages/Cart";
 import Wishlist from "./Pages/Wishlist";
-import ArtisanProfile from "./Pages/ArtisanProfie";
 import UserPanel from "./Pages/UserPanel";
 import Profile from "./components/UserPanel/Profile";
 import Orders from "./components/UserPanel/Orders";
@@ -57,8 +55,6 @@ function App() {
           <Route path="new-arrivals" element={<ProductPage />} />
           <Route path="collections" element={<ProductPage />} />
           <Route path="best-sellers" element={<ProductPage />} />
-          <Route path="/artisans" element={<Artisans />} />
-          <Route path="/artisan/:id" element={<ArtisanProfile />} />
 
           <Route
             path="/user-panel"

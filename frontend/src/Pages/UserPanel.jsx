@@ -14,7 +14,7 @@ function UserPanel() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FFF0C4]/40 px-4 py-10">
+    <div className="min-h-screen  px-4 py-10">
       {/* Page Title */}
       <h1 className="text-3xl font-semibold text-primary text-center mb-8">
         My Account
