@@ -201,13 +201,13 @@ function Navbar() {
                       <hr />
                       <p
                         onClick={() => handleNavigate("/login")}
-                        className="px-4 py-2 hover:bg-[#FFF0C4] cursor-pointer"
+                        className="px-4 py-2 text-sm hover:bg-[#FFF0C4] cursor-pointer"
                       >
                         Login / Signup
                       </p>
                       <p
                         onClick={handleBecomeVendor}
-                        className="px-4 py-2 font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer"
+                        className="px-4 py-2 text-sm font-semibold text-[#8C1007] hover:bg-[#FFF0C4] cursor-pointer"
                       >
                         Become a Vendor ⭐
                       </p>
@@ -289,7 +289,7 @@ function Navbar() {
         <div className="hidden md:block border-t border-[#FFF0C4]/20">
           <div className="max-w-7xl mx-auto px-6 py-2 flex items-center gap-10 text-sm">
 
-            {["Home", "Kutir Assist", "Assistance", "Product", "Catalogue", "New Arrivals", "Best Sellers", "Artisans", "Collections"].map(
+            {["Home", "Kutir Assist", "Assistance", "Customization", "Product", "Catalogue", "New Arrivals", "Best Sellers", "Collections"].map(
               (item) => {
                 const path =
                   item === "Home"

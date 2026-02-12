@@ -16,8 +16,12 @@ function ProductDetails() {
     stock: 8,
     description:
       "This handmade blue pottery vase is crafted by skilled artisans of Jaipur using traditional techniques passed down through generations. Each piece is unique and hand-painted.",
-    artisan:
-      "Crafted by local artisans from Jaipur, supporting rural craftsmanship and sustainable livelihoods.",
+    artisan: {
+      id: 1,
+      name: "Jaipur Crafts",
+      description:
+        "Crafted by local artisans from Jaipur, supporting rural craftsmanship and sustainable livelihoods.",
+    },
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4-wB1FXKmQBoecbakQNgxhX_wCZy5a0c-RA&s",
       "https://media.istockphoto.com/id/511671282/photo/chinese-antique-vase.jpg?s=612x612&w=0&k=20&c=ILirHqv--RNKWxWBGZdZi1c_5E3IoSCt-BNbb2oWXyY=",
@@ -62,8 +66,8 @@ function ProductDetails() {
                 alt="product"
                 onClick={() => setActiveImage(img)}
                 className={`h-20 w-20 object-cover rounded-lg cursor-pointer border ${activeImage === img
-                    ? "border-accent"
-                    : "border-transparent"
+                  ? "border-accent"
+                  : "border-transparent"
                   }`}
               />
             ))}
@@ -134,12 +138,11 @@ function ProductDetails() {
               className="flex-1"
             />
 
-            <button
+            <Button
+              title="Buy Now"
               onClick={handleBuyNow}
-              className="flex-1 py-2.5 rounded-lg font-medium bg-primary text-white hover:bg-hover transition"
-            >
-              Buy Now
-            </button>
+              className="flex-1"
+            />
           </div>
 
           {/* TRUST INFO */}
@@ -161,14 +164,41 @@ function ProductDetails() {
           </Card>
 
           {/* ARTISAN STORY */}
-          <Card>
-            <h3 className="font-semibold text-primary mb-2">
-              Artisan Story
-            </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {product.artisan}
-            </p>
-          </Card>
+          {/* ARTISAN STORY */}
+<Card>
+  <h3 className="font-semibold text-primary mb-3">
+    Artisan Story
+  </h3>
+
+  <p className="text-sm text-gray-600 leading-relaxed mb-4">
+    {product.artisan.description}
+  </p>
+
+  <div className="border-t border-accent/20 my-4"></div>
+
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-sm text-gray-500">
+        Crafted by
+      </p>
+
+      <p
+        onClick={() => navigate(`/catalogue/${product.artisan.slug}`)}
+        className="text-primary font-semibold cursor-pointer hover:underline transition"
+      >
+        {product.artisan.name} →
+      </p>
+    </div>
+
+    <button
+      onClick={() => navigate(`/catalogue/${product.artisan.id}`)}
+      className="px-4 py-2 text-sm bg-cream text-primary border border-accent/30 hover:bg-accent hover:text-white transition"
+    >
+      Visit Store
+    </button>
+  </div>
+</Card>
+
         </div>
       </div>
     </div>
